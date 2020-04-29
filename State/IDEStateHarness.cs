@@ -89,14 +89,6 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                     Action = "/billing"
                 });
                 
-                // State.HeaderActions.Add(new IDEAction()
-                // {
-                //     Text = "Buy Now",
-                //     Type = IDEActionTypes.Modal,
-                //     Icon = "shopping_cart",
-                //     Action = "/billing"
-                // });
-
                 State.CurrentActivity = State.Activities.FirstOrDefault();
             }
 
