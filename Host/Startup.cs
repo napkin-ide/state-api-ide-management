@@ -12,6 +12,9 @@ using LCU.Personas.Client.Security;
 using System.Linq;
 using System;
 using LCU.StateAPI;
+using LCU.StateAPI.Hosting;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.AspNetCore.DataProtection;
 
 [assembly: FunctionsStartup(typeof(LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Host.Startup))]
 
