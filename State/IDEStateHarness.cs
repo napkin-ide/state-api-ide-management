@@ -44,7 +44,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #region API Methods
         public virtual async Task Ensure(ApplicationManagerClient appMgr, IdentityManagerClient idMgr, string entApiKey, string username)
         {
-
+ 
             // check in to see if user has free trial/paid subscriber rights    
             var authResp = await idMgr.HasAccess(entApiKey, username, new List<string>() { "LCU.NapkinIDE.AllAccess" });
 
@@ -94,9 +94,9 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             State.HeaderActions.Add(new IDEAction()
             {
-                Text = "Download LCUs",
+                Text = "Download",
                 Type = IDEActionTypes.ExternalLink,
-                Icon = "code",
+                Icon = "save_alt",
                 Action = "https://github.com/lowcodeunit",
             });
 
