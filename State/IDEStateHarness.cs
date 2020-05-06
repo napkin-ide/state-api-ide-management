@@ -84,11 +84,11 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 State.HeaderActions.Add(new IDEAction()
                 {
                     Text = "Buy Now",
-                    Type = IDEActionTypes.Modal,
+                    Type = IDEActionTypes.ExternalLink,
                     Icon = "shopping_cart",
                     Action = "/billing"
                 });
-
+                
                 State.CurrentActivity = State.Activities.FirstOrDefault();
             }
 
