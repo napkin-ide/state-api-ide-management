@@ -94,9 +94,9 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             State.HeaderActions.Add(new IDEAction()
             {
-                Text = "Download LCUs",
+                Text = "Download",
                 Type = IDEActionTypes.ExternalLink,
-                Icon = "code",
+                Icon = "save_alt",
                 Action = "https://github.com/lowcodeunit",
             });
 
