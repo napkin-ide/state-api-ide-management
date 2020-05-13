@@ -183,9 +183,9 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             });
         }
 
-        public virtual async Task LoadLCUConfig(ApplicationManagerClient appMgr, string entApiKey, string host, string lcuLookup)
+        public virtual async Task LoadLCUConfig(ApplicationManagerClient appMgr, string entApiKey, string lcuLookup)
         {
-            var lcuConfig = await appMgr.LoadLCUConfig(lcuLookup, host);
+            var lcuConfig = await appMgr.LoadLCUConfig(entApiKey, lcuLookup);
 
             State.Config.LCUConfig = lcuConfig.Model;
 
@@ -258,7 +258,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
                 await LoadLCUs(appMgr, entApiKey);
 
-                await LoadLCUConfig(appMgr, entApiKey, host, lcuLookup);
+                await LoadLCUConfig(appMgr, entApiKey, lcuLookup);
             }
         }
 
@@ -285,7 +285,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.Config.CurrentLCUConfig = lcuLookup;
 
             if (!State.Config.CurrentLCUConfig.IsNullOrEmpty())
-                await LoadLCUConfig(appMgr, entApiKey, host, State.Config.CurrentLCUConfig);
+                await LoadLCUConfig(appMgr, entApiKey, State.Config.CurrentLCUConfig);
         }
 
         public virtual async Task SetEditActivity(string activityLookup)
