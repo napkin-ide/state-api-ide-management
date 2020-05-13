@@ -178,7 +178,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 State.SideBar = new IDESideBar();
 
 
-            var firstAction = State.SideBar.Actions.FirstOrDefault();
+            var firstAction = State.SideBar?.Actions?.FirstOrDefault();
 
             if (firstAction != null)
                 await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
