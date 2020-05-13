@@ -184,7 +184,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 if (firstAction != null)
                     await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
 
-                    State.HasLoaded = true;
+                State.HasLoaded = true;
             }
         }
 
