@@ -177,11 +177,15 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             else
                 State.SideBar = new IDESideBar();
 
+            if (!State.HasLoaded)
+            {
+                var firstAction = State.SideBar?.Actions?.FirstOrDefault();
 
-            var firstAction = State.SideBar?.Actions?.FirstOrDefault();
+                if (firstAction != null)
+                    await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
 
-            if (firstAction != null)
-                await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
+                    State.HasLoaded = true;
+            }
         }
 
         public virtual async Task RemoveEditor(string editorLookup)

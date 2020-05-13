@@ -40,7 +40,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         public virtual List<IDEEditor> Editors { get; set; }
 
         [DataMember]
-        public virtual bool IsFirstLoad { get; set; }
+        public virtual bool HasLoaded { get; set; }
 
         [DataMember]
         public virtual List<IDEAction> HeaderActions { get; set; }
