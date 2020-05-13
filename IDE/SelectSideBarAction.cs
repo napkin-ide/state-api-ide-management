@@ -49,7 +49,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.IDE
 
                 var stateDetails = StateUtils.LoadStateDetails(req);
 
-                await harness.SelectSideBarAction(appMgr, stateDetails.EnterpriseAPIKey, stateDetails.Host, reqData.Group, reqData.Action, reqData.Section);
+                await harness.SelectSideBarAction(appMgr, stateDetails.EnterpriseAPIKey, reqData.Group, reqData.Action, reqData.Section);
 
                 return Status.Success;
             });

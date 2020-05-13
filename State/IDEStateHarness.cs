@@ -44,7 +44,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #region API Methods
         public virtual async Task Ensure(ApplicationManagerClient appMgr, IdentityManagerClient idMgr, string entApiKey, string username)
         {
- 
+
             // check in to see if user has free trial/paid subscriber rights    
             var authResp = await idMgr.HasAccess(entApiKey, username, new List<string>() { "LCU.NapkinIDE.AllAccess" });
 
@@ -52,15 +52,49 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             var activitiesResp = await appMgr.LoadIDEActivities(entApiKey);
 
-            State.HeaderActions = new List<IDEAction>();
+            if (State.IsActiveSubscriber)
+            {
+                var appsResp = await appMgr.ListApplications(entApiKey);
+
+                State.InfrastructureConfigured = activitiesResp.Status && !activitiesResp.Model.IsNullOrEmpty() && appsResp.Status && !appsResp.Model.IsNullOrEmpty();
+            }
+            else
+            {
+                State.InfrastructureConfigured = true;
+            }
+
+            if (activitiesResp.Status)
+                await SetupActivities(activitiesResp.Model, entApiKey);
+
+            await LoadHeaderActions();
+
+            await LoadSideBar(appMgr, entApiKey);
 
             if (State.IsActiveSubscriber)
             {
                 var appsResp = await appMgr.ListApplications(entApiKey);
 
                 State.InfrastructureConfigured = activitiesResp.Status && !activitiesResp.Model.IsNullOrEmpty() && appsResp.Status && !appsResp.Model.IsNullOrEmpty();
+            }
+            else
+            {
 
-                State.Activities = activitiesResp.Model ?? new List<IDEActivity>();
+            }
+        }
+
+        public virtual async Task SetupActivities(ApplicationManagerClient appMgr, string entApiKey)
+        {
+            var activitiesResp = await appMgr.LoadIDEActivities(entApiKey);
+
+            if (activitiesResp.Status)
+                await SetupActivities(activitiesResp.Model, entApiKey);
+        }
+
+        public virtual async Task SetupActivities(List<IDEActivity> activities, string entApiKey)
+        {
+            if (State.IsActiveSubscriber)
+            {
+                State.Activities = activities ?? new List<IDEActivity>();
 
                 State.RootActivities = new List<IDEActivity>();
 
@@ -70,17 +104,26 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                     Lookup = Environment.GetEnvironmentVariable("FORGE-SETTINGS-PATH") ?? "/forge-settings",
                     Title = "Settings"
                 });
-
-                State.HeaderActions = new List<IDEAction>();
             }
             else
             {
                 State.RootActivities = new List<IDEActivity>();
 
-                State.Activities = activitiesResp.Model?.Where(act => act.Lookup == "limited-trial").ToList() ?? new List<IDEActivity>();
+                State.Activities = activities?.Where(act => act.Lookup == "limited-trial").ToList() ?? new List<IDEActivity>();
+            }
 
-                State.InfrastructureConfigured = true;
+            State.CurrentActivity = State.Activities.FirstOrDefault();
+        }
 
+        public virtual async Task LoadHeaderActions()
+        {
+            State.HeaderActions = new List<IDEAction>();
+
+            if (State.IsActiveSubscriber)
+            {
+            }
+            else
+            {
                 State.HeaderActions.Add(new IDEAction()
                 {
                     Text = "Buy Now",
@@ -88,8 +131,6 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                     Icon = "shopping_cart",
                     Action = "/billing"
                 });
-                
-                State.CurrentActivity = State.Activities.FirstOrDefault();
             }
 
             State.HeaderActions.Add(new IDEAction()
@@ -115,9 +156,6 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 Icon = "help_outline",
                 Action = "mailto:support@fathym.com?subject=Fathym IDE Support - ____&body=Please provide us as much detail as you can so that we may better support you."
             });
-
-            await LoadSideBar(appMgr, entApiKey);
-
         }
 
         public virtual async Task LoadSideBar(ApplicationManagerClient appMgr, string entApiKey)
@@ -138,6 +176,12 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
             else
                 State.SideBar = new IDESideBar();
+
+
+            var firstAction = State.SideBar.Actions.FirstOrDefault();
+
+            if (firstAction != null)
+                await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
         }
 
         public virtual async Task RemoveEditor(string editorLookup)
@@ -156,7 +200,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.CurrentEditor = State.Editors.FirstOrDefault(a => a.Lookup == editorLookup);
         }
 
-        public virtual async Task SelectSideBarAction(ApplicationManagerClient appMgr, string entApiKey, string host, string group, string action, string section)
+        public virtual async Task SelectSideBarAction(ApplicationManagerClient appMgr, string entApiKey, string group, string action, string section)
         {
             State.SideBar.CurrentAction = State.SideBar.Actions.FirstOrDefault(a => a.Group == group && a.Action == action);
 
@@ -167,7 +211,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             if (!State.Editors.Select(e => e.Lookup).Contains(actionLookup))
             {
-                var ideEditorResp = await appMgr.LoadIDEEditor(entApiKey, group, action, section, host, State.CurrentActivity.Lookup);
+                var ideEditorResp = await appMgr.LoadIDEEditor(entApiKey, group, action, section, State.CurrentActivity.Lookup);
 
                 if (ideEditorResp.Status)
                     State.Editors.Add(ideEditorResp.Model);
