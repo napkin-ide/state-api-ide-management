@@ -109,7 +109,8 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             {
                 State.RootActivities = new List<IDEActivity>();
 
-                State.Activities = activities?.Where(act => act.Lookup == "limited-trial").ToList() ?? new List<IDEActivity>();
+                State.Activities = activities?.Where(act => act.Lookup == "limited-trial" || act.Lookup == "fathym-forecast").ToList() 
+                    ?? new List<IDEActivity>();
             }
 
             State.CurrentActivity = State.Activities.FirstOrDefault();
