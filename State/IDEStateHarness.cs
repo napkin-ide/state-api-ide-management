@@ -125,15 +125,14 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
             else
             {
-                // Commenting out per Task 7628
                 
-                // State.HeaderActions.Add(new IDEAction()
-                // {
-                //     Text = "Buy Now",
-                //     Type = IDEActionTypes.ExternalLink,
-                //     Icon = "shopping_cart",
-                //     Action = "/billing"
-                // });
+                State.HeaderActions.Add(new IDEAction()
+                {
+                    Text = "Buy Now",
+                    Type = IDEActionTypes.ExternalLink,
+                    Icon = "shopping_cart",
+                    Action = "https://www.fathym-it.com/billing/lcu"
+                });
             }
 
             State.HeaderActions.Add(new IDEAction()
