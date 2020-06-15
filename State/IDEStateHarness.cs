@@ -125,7 +125,6 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
             else
             {
-                // Commenting out per Task 7628
                 
                 State.HeaderActions.Add(new IDEAction()
                 {
