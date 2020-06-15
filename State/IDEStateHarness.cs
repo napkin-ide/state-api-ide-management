@@ -128,7 +128,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 
                 State.HeaderActions.Add(new IDEAction()
                 {
-                    Text = "Buy Now",
+                    Text = "Free Trial",
                     Type = IDEActionTypes.ExternalLink,
                     Icon = "shopping_cart",
                     Action = "https://www.fathym-it.com/billing/lcu"
