@@ -125,12 +125,13 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
             else
             {
+                
                 State.HeaderActions.Add(new IDEAction()
                 {
-                    Text = "Buy Now",
+                    Text = "Free Trial",
                     Type = IDEActionTypes.ExternalLink,
                     Icon = "shopping_cart",
-                    Action = "/billing"
+                    Action = "https://www.fathym-it.com/billing/lcu"
                 });
             }
 
@@ -144,7 +145,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             State.HeaderActions.Add(new IDEAction()
             {
-                Text = "",
+                Text = "Documentation",
                 Type = IDEActionTypes.ExternalLink,
                 Icon = "assignment",
                 Action = "https://support.fathym.com"
@@ -152,10 +153,10 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             State.HeaderActions.Add(new IDEAction()
             {
-                Text = "",
-                Type = IDEActionTypes.Link,
+                Text = "Support",
+                Type = IDEActionTypes.ExternalLink,
                 Icon = "help_outline",
-                Action = "mailto:support@fathym.com?subject=Fathym IDE Support - ____&body=Please provide us as much detail as you can so that we may better support you."
+                Action = "https://fathym.com/support"
             });
         }
 
