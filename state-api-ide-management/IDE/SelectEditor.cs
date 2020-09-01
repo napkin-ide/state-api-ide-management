@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Runtime.Serialization;
 using Fathym;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.Blob;
 using LCU.StateAPI.Utilities;
 using LCU.Personas.Client.Applications;
 using LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State;
@@ -34,7 +34,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.IDE
         [FunctionName("SelectEditor")]
         public virtual async Task<Status> Run([HttpTrigger] HttpRequest req, ILogger log,
             [SignalR(HubName = IDEManagementState.HUB_NAME)]IAsyncCollector<SignalRMessage> signalRMessages,
-            [Blob("state-api/{headers.lcu-ent-api-key}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
+            [Blob("state-api/{headers.lcu-ent-lookup}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
         {
             return await stateBlob.WithStateHarness<IDEState, SelectEditorRequest, IDEStateHarness>(req, signalRMessages, log,
                 async (harness, reqData, actReq) =>

@@ -25,10 +25,10 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
     public class IDEState
     {
         [DataMember]
-        public virtual List<IDEActivity> Activities { get; set; }
+        public virtual List<Activity> Activities { get; set; }
 
         [DataMember]
-        public virtual IDEActivity CurrentActivity { get; set; }
+        public virtual Activity CurrentActivity { get; set; }
 
         [DataMember]
         public virtual IDEEditor CurrentEditor { get; set; }
@@ -58,7 +58,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         public virtual List<IDEPanel> Panels { get; set; }
 
         [DataMember]
-        public virtual List<IDEActivity> RootActivities { get; set; }
+        public virtual List<Activity> RootActivities { get; set; }
 
         [DataMember]
         public virtual bool ShowPanels { get; set; }

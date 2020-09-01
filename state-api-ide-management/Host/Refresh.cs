@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Fathym;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.Blob;
 using System.Runtime.Serialization;
 using Fathym.API;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Host
         [FunctionName("Refresh")]
         public virtual async Task<Status> Run([HttpTrigger] HttpRequest req, ILogger log,
             [SignalR(HubName = IDEManagementState.HUB_NAME)]IAsyncCollector<SignalRMessage> signalRMessages,
-            [Blob("state-api/{headers.lcu-ent-api-key}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
+            [Blob("state-api/{headers.lcu-ent-lookup}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
         {
             var stateDetails = StateUtils.LoadStateDetails(req);
 
@@ -59,13 +59,13 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Host
                 {
                     log.LogInformation($"Refresh");
                     
-                    await harness.Ensure(appDev, stateDetails.EnterpriseAPIKey);
+                    await harness.Ensure(appDev, stateDetails.EnterpriseLookup);
 
-                    await harness.LoadActivities(appMgr, stateDetails.EnterpriseAPIKey);
+                    await harness.LoadActivities(appMgr, stateDetails.EnterpriseLookup);
 
-                    await harness.ConfigureSideBarEditActivity(appMgr, stateDetails.EnterpriseAPIKey, stateDetails.Host);
+                    await harness.ConfigureSideBarEditActivity(appMgr, stateDetails.EnterpriseLookup, stateDetails.Host);
 
-                    await harness.LoadLCUs(appMgr, stateDetails.EnterpriseAPIKey);
+                    await harness.LoadLCUs(appMgr, stateDetails.EnterpriseLookup);
 
                     await harness.ClearConfig();
 
@@ -79,7 +79,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Host
                 {
                     log.LogInformation($"Refresh");
 
-                    await harness.Ensure(appMgr, idMgr, stateDetails.EnterpriseAPIKey, stateDetails.Username);
+                    await harness.Ensure(appMgr, idMgr, stateDetails.EnterpriseLookup, stateDetails.Username);
 
                     harness.SetUsername(stateDetails.Username);
 

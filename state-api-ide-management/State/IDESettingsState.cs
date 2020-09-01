@@ -26,7 +26,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
     public class IDESettingsState
     {
 		[DataMember]
-		public virtual List<IDEActivity> Activities { get; set; }
+		public virtual List<Activity> Activities { get; set; }
 
 		[DataMember]
 		public virtual IdeSettingsAddNew AddNew { get; set; }
@@ -53,7 +53,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 		public virtual bool Loading { get; set; }
 
 		[DataMember]
-		public virtual List<IDESideBarAction> SectionActions { get; set; }
+		public virtual List<SectionAction> SectionActions { get; set; }
 
 		[DataMember]
 		public virtual string SideBarEditActivity { get; set; }
@@ -100,7 +100,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 		public virtual string EditLCU { get; set; }
 
 		[DataMember]
-		public virtual List<LowCodeUnitSetupConfig> LCUs { get; set; }
+		public virtual List<LCUConfig> LCUs { get; set; }
 	}
 
     [Serializable]

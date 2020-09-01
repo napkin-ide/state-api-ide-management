@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 using LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State;
 using Fathym;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.Blob;
 using LCU.StateAPI.Utilities;
 using LCU.Personas.Client.Applications;
 
@@ -38,7 +38,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Settings
         [FunctionName("AddDefaultDataAppsLCUs")]
         public virtual async Task<Status> Run([HttpTrigger] HttpRequest req, ILogger log,
             [SignalR(HubName = IDEManagementState.HUB_NAME)]IAsyncCollector<SignalRMessage> signalRMessages,
-            [Blob("state-api/{headers.lcu-ent-api-key}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
+            [Blob("state-api/{headers.lcu-ent-lookup}/{headers.lcu-hub-name}/{headers.x-ms-client-principal-id}/{headers.lcu-state-key}", FileAccess.ReadWrite)] CloudBlockBlob stateBlob)
         {
             return await stateBlob.WithStateHarness<IDESettingsState, AddDefaultDataAppsLCUsRequest, IDESettingsStateHarness>(req, signalRMessages, log,
                 async (harness, reqData, actReq) =>
@@ -47,7 +47,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.Settings
 
                 var stateDetails = StateUtils.LoadStateDetails(req);
 
-				await harness.AddDefaultDataAppsLCUs(appDev, appMgr, stateDetails.EnterpriseAPIKey, stateDetails.Host);
+				await harness.AddDefaultDataAppsLCUs(appDev, appMgr, stateDetails.EnterpriseLookup, stateDetails.Host);
 
                 return Status.Success;
             });

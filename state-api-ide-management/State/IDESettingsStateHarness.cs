@@ -43,43 +43,43 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #endregion
 
         #region API Methods
-        public virtual async Task AddDefaultDataAppsLCUs(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string host)
+        public virtual async Task AddDefaultDataAppsLCUs(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string host)
         {
-            var nideConfigured = await appDev.ConfigureNapkinIDEForDataApps(entApiKey, host);
+            var nideConfigured = await appDev.ConfigureNapkinIDEForDataApps(entLookup);
 
             if (nideConfigured.Status)
             {
-                await LoadActivities(appMgr, entApiKey);
+                await LoadActivities(appMgr, entLookup);
 
-                await LoadSideBarSections(appMgr, entApiKey);
+                await LoadSideBarSections(appMgr, entLookup);
 
-                await LoadSecionActions(appMgr, entApiKey);
+                await LoadSecionActions(appMgr, entLookup);
 
-                await LoadLCUs(appMgr, entApiKey);
+                await LoadLCUs(appMgr, entLookup);
             }
         }
 
-        public virtual async Task AddDefaultDataFlowLCUs(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string host)
+        public virtual async Task AddDefaultDataFlowLCUs(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string host)
         {
-            var nideConfigured = await appDev.ConfigureNapkinIDEForDataFlows(entApiKey, host);
+            var nideConfigured = await appDev.ConfigureNapkinIDEForDataFlows(entLookup);
 
             if (nideConfigured.Status)
             {
-                await LoadActivities(appMgr, entApiKey);
+                await LoadActivities(appMgr, entLookup);
 
-                await LoadSideBarSections(appMgr, entApiKey);
+                await LoadSideBarSections(appMgr, entLookup);
 
-                await LoadSecionActions(appMgr, entApiKey);
+                await LoadSecionActions(appMgr, entLookup);
 
-                await LoadLCUs(appMgr, entApiKey);
+                await LoadLCUs(appMgr, entLookup);
             }
         }
 
-        public virtual async Task AddSideBarSection(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string section)
+        public virtual async Task AddSideBarSection(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string section)
         {
-            await appDev.AddSideBarSection(section, entApiKey, State.SideBarEditActivity);
+            await appDev.AddSideBarSection(section, entLookup, State.SideBarEditActivity);
 
-            await LoadSideBarSections(appMgr, entApiKey);
+            await LoadSideBarSections(appMgr, entLookup);
         }
 
         public virtual async Task ClearConfig()
@@ -95,65 +95,65 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.Config.ActiveSolutions = new List<IdeSettingsConfigSolution>();
         }
 
-        public virtual async Task ConfigureSideBarEditActivity(ApplicationManagerClient appMgr, string entApiKey, string host)
+        public virtual async Task ConfigureSideBarEditActivity(ApplicationManagerClient appMgr, string entLookup, string host)
         {
             if (!State.SideBarEditActivity.IsNullOrEmpty())
             {
-                var sidBarSections = await appMgr.LoadIDESideBarSections(entApiKey, State.SideBarEditActivity);
+                var sidBarSections = await appMgr.LoadIDESideBarSections(entLookup, State.SideBarEditActivity);
 
                 State.SideBarSections = sidBarSections.Model;
 
                 if (!State.EditSection.IsNullOrEmpty())
                 {
-                    var sidBarActions = await appMgr.LoadIDESideBarActions(entApiKey, State.SideBarEditActivity, State.EditSection);
+                    var sidBarActions = await appMgr.LoadSectionActions(entLookup, State.SideBarEditActivity, State.EditSection);
 
                     State.SectionActions = sidBarActions.Model;
                 }
             }
         }
 
-        public virtual async Task DeleteActivity(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string activityLookup)
+        public virtual async Task DeleteActivity(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string activityLookup)
         {
-            await appDev.DeleteActivity(activityLookup, entApiKey);
+            await appDev.DeleteActivity(activityLookup, entLookup);
 
-            await LoadActivities(appMgr, entApiKey);
+            await LoadActivities(appMgr, entLookup);
         }
 
 
-        public virtual async Task DeleteLCU(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string lcuLookup)
+        public virtual async Task DeleteLCU(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string lcuLookup)
         {
-            await appDev.DeleteLCU(lcuLookup, entApiKey);
+            await appDev.DeleteLCU(lcuLookup, entLookup);
 
             //  TODO:  Need to delete other assets related to the LCU...  created apps, delete from filesystem, cleanup state??  Or what do we want to do with that stuff?
 
-            await LoadLCUs(appMgr, entApiKey);
+            await LoadLCUs(appMgr, entLookup);
         }
 
-        public virtual async Task DeleteSectionAction(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string action, string group)
+        public virtual async Task DeleteSectionAction(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string action, string group)
         {
-            await appDev.DeleteSectionAction(entApiKey, State.EditSection, State.SideBarEditActivity, action, group);
+            await appDev.DeleteSectionAction(entLookup, State.EditSection, State.SideBarEditActivity, action, group);
 
-            await LoadSecionActions(appMgr, entApiKey);
+            await LoadSecionActions(appMgr, entLookup);
         }
 
-        public virtual async Task DeleteSideBarSection(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string section)
+        public virtual async Task DeleteSideBarSection(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string section)
         {
-            await appDev.DeleteSideBarSection(section, entApiKey, State.SideBarEditActivity);
+            await appDev.DeleteSideBarSection(section, entLookup, State.SideBarEditActivity);
 
             //  TODO:  Also need to delete all related side bar actions for sections
 
-            await LoadSideBarSections(appMgr, entApiKey);
+            await LoadSideBarSections(appMgr, entLookup);
         }
 
-        public virtual async Task Ensure(ApplicationDeveloperClient appDev, string entApiKey)
+        public virtual async Task Ensure(ApplicationDeveloperClient appDev, string entLookup)
         {
-            await appDev.EnsureIDESettings(entApiKey);
+            await appDev.EnsureIDESettings(entLookup);
 
             if (State.AddNew == null)
                 State.AddNew = new IdeSettingsAddNew();
 
             if (State.Arch == null)
-                State.Arch = new IdeSettingsArchitechtureState() { LCUs = new List<LowCodeUnitSetupConfig>() };
+                State.Arch = new IdeSettingsArchitechtureState() { LCUs = new List<LCUConfig>() };
 
             if (State.Config == null)
                 State.Config = new IdeSettingsConfigState()
@@ -162,30 +162,30 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 };
         }
 
-        public virtual async Task LoadActivities(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task LoadActivities(ApplicationManagerClient appMgr, string entLookup)
         {
-            var acts = await appMgr.LoadIDEActivities(entApiKey);
+            var acts = await appMgr.LoadIDEActivities(entLookup);
 
             State.Activities = acts.Model;
         }
 
-        public virtual async Task LoadLCUs(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task LoadLCUs(ApplicationManagerClient appMgr, string entLookup)
         {
-            var lcus = await appMgr.ListLCUs(entApiKey);
+            var lcus = await appMgr.ListLCUs(entLookup);
 
             State.Arch.LCUs = lcus.Model;
 
             State.LCUSolutionOptions = State.Arch.LCUs?.ToDictionary(lcu => lcu.Lookup, lcu =>
             {
-                var solutions = appMgr.ListLCUSolutions(entApiKey, lcu.Lookup).Result;
+                var solutions = appMgr.ListLCUSolutions(entLookup, lcu.Lookup).Result;
 
                 return solutions?.Model?.Select(sln => sln.Name)?.ToList() ?? new List<string>();
             });
         }
 
-        public virtual async Task LoadLCUConfig(ApplicationManagerClient appMgr, string entApiKey, string lcuLookup)
+        public virtual async Task LoadLCUConfig(ApplicationManagerClient appMgr, string entLookup, string lcuLookup)
         {
-            var lcuConfig = await appMgr.LoadLCUConfig(entApiKey, lcuLookup);
+            var lcuConfig = await appMgr.LoadLCUConfig(entLookup, lcuLookup);
 
             State.Config.LCUConfig = lcuConfig.Model;
 
@@ -193,43 +193,43 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             State.Config.ActiveFiles = State.Config.LCUConfig.Files;
 
-            var packSetup = await appMgr.GetModulePackSetup(entApiKey, lcuLookup);
+            var packSetup = await appMgr.GetModulePackSetup(entLookup, lcuLookup);
 
             State.Config.ActiveModules = packSetup.Model;
 
-            var lcuSolutions = await appMgr.ListLCUSolutions(entApiKey, lcuLookup);
+            var lcuSolutions = await appMgr.ListLCUSolutions(entLookup, lcuLookup);
 
             State.Config.ActiveSolutions = lcuSolutions.Model;
         }
 
-        public virtual async Task LoadSecionActions(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task LoadSecionActions(ApplicationManagerClient appMgr, string entLookup)
         {
             if (!State.SideBarEditActivity.IsNullOrEmpty() && !State.EditSection.IsNullOrEmpty())
             {
-                var sidBarActions = await appMgr.LoadIDESideBarActions(entApiKey, State.SideBarEditActivity, State.EditSection);
+                var sidBarActions = await appMgr.LoadSectionActions(entLookup, State.SideBarEditActivity, State.EditSection);
 
                 State.SectionActions = sidBarActions.Model;
             }
             else
-                State.SectionActions = new List<IDESideBarAction>();
+                State.SectionActions = new List<SectionAction>();
         }
 
-        public virtual async Task LoadSideBarSections(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task LoadSideBarSections(ApplicationManagerClient appMgr, string entLookup)
         {
-            var sections = await appMgr.LoadIDESideBarSections(entApiKey, State.SideBarEditActivity);
+            var sections = await appMgr.LoadIDESideBarSections(entLookup, State.SideBarEditActivity);
 
             State.SideBarSections = sections.Model;
         }
 
-        public virtual async Task SaveActivity(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, IDEActivity activity)
+        public virtual async Task SaveActivity(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, Activity activity)
         {
             if (!activity.Title.IsNullOrEmpty() && !activity.Lookup.IsNullOrEmpty() && !activity.Icon.IsNullOrEmpty())
             {
-                var actResp = await appDev.SaveActivity(activity, entApiKey);
+                var actResp = await appDev.SaveActivity(activity, entLookup);
 
                 activity = actResp.Model;
 
-                await LoadActivities(appMgr, entApiKey);
+                await LoadActivities(appMgr, entLookup);
 
                 await ToggleAddNew(AddNewTypes.None);
 
@@ -237,46 +237,46 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
         }
 
-        public virtual async Task SaveLCU(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string host, LowCodeUnitSetupConfig lcu)
+        public virtual async Task SaveLCU(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string host, LCUConfig lcu)
         {
             if (!lcu.Lookup.IsNullOrEmpty() && !lcu.NPMPackage.IsNullOrEmpty() && !lcu.PackageVersion.IsNullOrEmpty())
             {
-                var ensured = await appDev.EnsureLowCodeUnitView(lcu, entApiKey, host);
+                var ensured = await appDev.EnsureLowCodeUnitView(lcu, entLookup, host);
 
-                await LoadLCUs(appMgr, entApiKey);
+                await LoadLCUs(appMgr, entLookup);
 
                 await ToggleAddNew(AddNewTypes.None);
             }
         }
 
-        public virtual async Task SaveLCUCapabilities(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, string host, string lcuLookup,
+        public virtual async Task SaveLCUCapabilities(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string host, string lcuLookup,
             LowCodeUnitConfiguration lcuConfig)
         {
             if (!lcuLookup.IsNullOrEmpty())
             {
-                var status = await appDev.SaveLCUCapabilities(lcuConfig, entApiKey, lcuLookup);
+                var status = await appDev.SaveLCUCapabilities(lcuConfig, entLookup, lcuLookup);
 
-                await LoadLCUs(appMgr, entApiKey);
+                await LoadLCUs(appMgr, entLookup);
 
-                await LoadLCUConfig(appMgr, entApiKey, lcuLookup);
+                await LoadLCUConfig(appMgr, entLookup, lcuLookup);
             }
         }
 
-        public virtual async Task SaveSectionAction(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entApiKey, IDESideBarAction action)
+        public virtual async Task SaveSectionAction(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, SectionAction action)
         {
             if (!action.Action.IsNullOrEmpty() && !action.Title.IsNullOrEmpty())
             {
                 action.Section = State.EditSection;
 
-                var secAct = await appDev.SaveSectionAction(action, entApiKey, State.SideBarEditActivity);
+                var secAct = await appDev.SaveSectionAction(action, entLookup, State.SideBarEditActivity);
 
-                await LoadSecionActions(appMgr, entApiKey);
+                await LoadSecionActions(appMgr, entLookup);
 
                 await ToggleAddNew(AddNewTypes.None);
             }
         }
 
-        public virtual async Task SetConfigLCU(ApplicationManagerClient appMgr, string entApiKey, string host, string lcuLookup)
+        public virtual async Task SetConfigLCU(ApplicationManagerClient appMgr, string entLookup, string host, string lcuLookup)
         {
             // log.LogInformation("Starting to set config LCU");
 
@@ -285,7 +285,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.Config.CurrentLCUConfig = lcuLookup;
 
             if (!State.Config.CurrentLCUConfig.IsNullOrEmpty())
-                await LoadLCUConfig(appMgr, entApiKey, State.Config.CurrentLCUConfig);
+                await LoadLCUConfig(appMgr, entLookup, State.Config.CurrentLCUConfig);
         }
 
         public virtual async Task SetEditActivity(string activityLookup)
@@ -302,27 +302,27 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.Arch.EditLCU = State.Arch.LCUs?.FirstOrDefault(a => a.Lookup == lcuLookup)?.Lookup;
         }
 
-        public virtual async Task SetEditSection(ApplicationManagerClient appMgr, string entApiKey, string section)
+        public virtual async Task SetEditSection(ApplicationManagerClient appMgr, string entLookup, string section)
         {
             await ToggleAddNew(AddNewTypes.None);
 
             State.EditSection = State.SideBarSections?.FirstOrDefault(sec => sec == section);
 
-            await LoadSecionActions(appMgr, entApiKey);
+            await LoadSecionActions(appMgr, entLookup);
         }
 
-        public virtual async Task SetEditSectionAction(ApplicationManagerClient appMgr, string entApiKey, string action)
+        public virtual async Task SetEditSectionAction(ApplicationManagerClient appMgr, string entLookup, string action)
         {
             State.EditSectionAction = State.SectionActions?.FirstOrDefault(sa => sa.Action == action)?.Action;
 
-            await LoadSecionActions(appMgr, entApiKey);
+            await LoadSecionActions(appMgr, entLookup);
         }
 
-        public virtual async Task SetSideBarEditActivity(ApplicationManagerClient appMgr, string entApiKey, string host, string activityLookup)
+        public virtual async Task SetSideBarEditActivity(ApplicationManagerClient appMgr, string entLookup, string host, string activityLookup)
         {
             State.SideBarEditActivity = activityLookup;
 
-            await ConfigureSideBarEditActivity(appMgr, entApiKey, host);
+            await ConfigureSideBarEditActivity(appMgr, entLookup, host);
         }
 
         public virtual async Task ToggleAddNew(AddNewTypes type)
@@ -383,10 +383,10 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
     public static class Temp
     {
 
-        public static async Task<BaseResponse> SaveLCUCapabilities(this ApplicationDeveloperClient appDev, LowCodeUnitConfiguration lcuConfig, string entApiKey,
+        public static async Task<BaseResponse> SaveLCUCapabilities(this ApplicationDeveloperClient appDev, LowCodeUnitConfiguration lcuConfig, string entLookup,
             string lcuLookup)
         {
-            var response = await appDev.Post<LowCodeUnitConfiguration, BaseResponse>($"hosting/{entApiKey}/lcus/{lcuLookup}",
+            var response = await appDev.Post<LowCodeUnitConfiguration, BaseResponse>($"hosting/{entLookup}/lcus/{lcuLookup}",
                 lcuConfig);
 
             return response;

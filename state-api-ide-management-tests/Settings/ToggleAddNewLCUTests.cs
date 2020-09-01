@@ -22,7 +22,7 @@ namespace state_api_ide_management_tests
         [TestMethod]
         public async Task TestToggleAddNewLCU()
         {
-            LcuEntApiKey = "";            
+            LcuentLookup = "";            
             PrincipalId = "";
 
             addRequestHeaders();

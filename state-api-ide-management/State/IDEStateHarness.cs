@@ -42,19 +42,19 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #endregion
 
         #region API Methods
-        public virtual async Task Ensure(ApplicationManagerClient appMgr, IdentityManagerClient idMgr, string entApiKey, string username)
+        public virtual async Task Ensure(ApplicationManagerClient appMgr, IdentityManagerClient idMgr, string entLookup, string username)
         {
 
             // check in to see if user has free trial/paid subscriber rights    
-            var authResp = await idMgr.HasAccess(entApiKey, username, new List<string>() { "LCU.NapkinIDE.AllAccess" });
+            var authResp = await idMgr.HasAccess(entLookup, username, new List<string>() { "LCU.NapkinIDE.AllAccess" });
 
             State.IsActiveSubscriber = authResp.Status;
 
-            var activitiesResp = await appMgr.LoadIDEActivities(entApiKey);
+            var activitiesResp = await appMgr.LoadIDEActivities(entLookup);
 
             if (State.IsActiveSubscriber)
             {
-                var appsResp = await appMgr.ListApplications(entApiKey);
+                var appsResp = await appMgr.ListApplications(entLookup);
 
                 State.InfrastructureConfigured = activitiesResp.Status && !activitiesResp.Model.IsNullOrEmpty() && appsResp.Status && !appsResp.Model.IsNullOrEmpty();
             }
@@ -64,41 +64,30 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
 
             if (activitiesResp.Status)
-                await SetupActivities(activitiesResp.Model, entApiKey);
+                await SetupActivities(activitiesResp.Model, entLookup);
 
             await LoadHeaderActions();
 
-            await LoadSideBar(appMgr, entApiKey);
-
-            if (State.IsActiveSubscriber)
-            {
-                var appsResp = await appMgr.ListApplications(entApiKey);
-
-                State.InfrastructureConfigured = activitiesResp.Status && !activitiesResp.Model.IsNullOrEmpty() && appsResp.Status && !appsResp.Model.IsNullOrEmpty();
-            }
-            else
-            {
-
-            }
+            await LoadSideBar(appMgr, entLookup);
         }
 
-        public virtual async Task SetupActivities(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task SetupActivities(ApplicationManagerClient appMgr, string entLookup)
         {
-            var activitiesResp = await appMgr.LoadIDEActivities(entApiKey);
+            var activitiesResp = await appMgr.LoadIDEActivities(entLookup);
 
             if (activitiesResp.Status)
-                await SetupActivities(activitiesResp.Model, entApiKey);
+                await SetupActivities(activitiesResp.Model, entLookup);
         }
 
-        public virtual async Task SetupActivities(List<IDEActivity> activities, string entApiKey)
+        public virtual async Task SetupActivities(List<Activity> activities, string entLookup)
         {
             if (State.IsActiveSubscriber)
             {
-                State.Activities = activities ?? new List<IDEActivity>();
+                State.Activities = activities ?? new List<Activity>();
 
-                State.RootActivities = new List<IDEActivity>();
+                State.RootActivities = new List<Activity>();
 
-                State.RootActivities.Add(new IDEActivity()
+                State.RootActivities.Add(new Activity()
                 {
                     Icon = "settings",
                     Lookup = Environment.GetEnvironmentVariable("FORGE-SETTINGS-PATH") ?? "/forge-settings",
@@ -107,10 +96,10 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             }
             else
             {
-                State.RootActivities = new List<IDEActivity>();
+                State.RootActivities = new List<Activity>();
 
                 State.Activities = activities?.Where(act => act.Lookup == "limited-trial" || act.Lookup == "fathym-forecast").ToList() 
-                    ?? new List<IDEActivity>();
+                    ?? new List<Activity>();
             }
 
             State.CurrentActivity = State.Activities.FirstOrDefault();
@@ -160,18 +149,18 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             });
         }
 
-        public virtual async Task LoadSideBar(ApplicationManagerClient appMgr, string entApiKey)
+        public virtual async Task LoadSideBar(ApplicationManagerClient appMgr, string entLookup)
         {
             if (State.SideBar == null)
                 State.SideBar = new IDESideBar();
 
             if (State.CurrentActivity != null)
             {
-                var sectionsResp = await appMgr.LoadIDESideBarSections(entApiKey, State.CurrentActivity.Lookup);
+                var sectionsResp = await appMgr.LoadIDESideBarSections(entLookup, State.CurrentActivity.Lookup);
 
                 State.SideBar.Actions = sectionsResp.Model.SelectMany(section =>
                 {
-                    var actionsResp = appMgr.LoadIDESideBarActions(entApiKey, State.CurrentActivity.Lookup, section).Result;
+                    var actionsResp = appMgr.LoadSectionActions(entLookup, State.CurrentActivity.Lookup, section).Result;
 
                     return actionsResp.Model;
                 }).ToList();
@@ -184,7 +173,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
                 var firstAction = State.SideBar?.Actions?.FirstOrDefault();
 
                 if (firstAction != null)
-                    await SelectSideBarAction(appMgr, entApiKey, firstAction.Group, firstAction.Action, firstAction.Section);
+                    await SelectSideBarAction(appMgr, entLookup, firstAction.Group, firstAction.Action, firstAction.Section);
 
                 State.HasLoaded = true;
             }
@@ -206,7 +195,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.CurrentEditor = State.Editors.FirstOrDefault(a => a.Lookup == editorLookup);
         }
 
-        public virtual async Task SelectSideBarAction(ApplicationManagerClient appMgr, string entApiKey, string group, string action, string section)
+        public virtual async Task SelectSideBarAction(ApplicationManagerClient appMgr, string entLookup, string group, string action, string section)
         {
             State.SideBar.CurrentAction = State.SideBar.Actions.FirstOrDefault(a => a.Group == group && a.Action == action);
 
@@ -217,7 +206,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
             if (!State.Editors.Select(e => e.Lookup).Contains(actionLookup))
             {
-                var ideEditorResp = await appMgr.LoadIDEEditor(entApiKey, group, action, section, State.CurrentActivity.Lookup);
+                var ideEditorResp = await appMgr.LoadIDEEditor(entLookup, group, action, section, State.CurrentActivity.Lookup);
 
                 if (ideEditorResp.Status)
                     State.Editors.Add(ideEditorResp.Model);
@@ -226,11 +215,11 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
             State.CurrentEditor = State.Editors.FirstOrDefault(a => a.Lookup == actionLookup);
         }
 
-        public virtual async Task SetActivity(ApplicationManagerClient appMgr, string entApiKey, string activityLookup)
+        public virtual async Task SetActivity(ApplicationManagerClient appMgr, string entLookup, string activityLookup)
         {
             State.CurrentActivity = State.Activities.FirstOrDefault(a => a.Lookup == activityLookup);
 
-            await LoadSideBar(appMgr, entApiKey);
+            await LoadSideBar(appMgr, entLookup);
 
             State.SideBar.CurrentAction = State.SideBar.Actions.FirstOrDefault(a => $"{a.Group}|{a.Action}" == State.CurrentEditor?.Lookup);
         }
