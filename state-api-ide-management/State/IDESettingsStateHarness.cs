@@ -37,8 +37,8 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #endregion
 
         #region Constructors
-        public IDESettingsStateHarness(IDESettingsState state)
-            : base(state ?? new IDESettingsState())
+        public IDESettingsStateHarness(IDESettingsState state, ILogger log)
+            : base(state ?? new IDESettingsState(), log)
         { }
         #endregion
 
@@ -239,7 +239,7 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
 
         public virtual async Task SaveLCU(ApplicationDeveloperClient appDev, ApplicationManagerClient appMgr, string entLookup, string host, LCUConfig lcu)
         {
-            if (!lcu.Lookup.IsNullOrEmpty() && !lcu.NPMPackage.IsNullOrEmpty() && !lcu.PackageVersion.IsNullOrEmpty())
+            if (!lcu.Lookup.IsNullOrEmpty() && lcu.Package != null)
             {
                 var ensured = await appDev.EnsureLowCodeUnitView(lcu, entLookup, host);
 

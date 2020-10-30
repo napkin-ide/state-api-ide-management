@@ -36,8 +36,8 @@ namespace LCU.State.API.NapkinIDE.NapkinIDE.IdeManagement.State
         #endregion
 
         #region Constructors
-        public IDEStateHarness(IDEState state)
-            : base(state ?? new IDEState())
+        public IDEStateHarness(IDEState state, ILogger log)
+            : base(state ?? new IDEState(), log)
         { }
         #endregion
 
